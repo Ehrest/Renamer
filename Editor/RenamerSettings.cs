@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 namespace Ehrest.Editor.Renamer
@@ -8,19 +9,15 @@ namespace Ehrest.Editor.Renamer
 
         public static IncrementBehavior IncrementBehavior { get; private set; }
 
-        private void OnValidate()
-        {
-            RenamerSettings.Refresh(this);
-        }
-
-        private void OnEnable()
-        {
-            RenamerSettings.Refresh(this);
-        }
-
         public static void Refresh(RenamerSettings instance)
         {
             IncrementBehavior = instance._incrementBehavior;
+        }
+
+        [InitializeOnLoadMethod]
+        public static void RefreshOnLoad()
+        {
+            Refresh(RenamerSettingsRegister.Load());
         }
     }
 }
