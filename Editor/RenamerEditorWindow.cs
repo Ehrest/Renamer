@@ -5,7 +5,7 @@ using UnityEditor;
 
 namespace Ehrest.Editor.Renamer
 {
-    public class RenamerEditorWindow : EditorWindow/*, IHasCustomMenu*/
+    public class RenamerEditorWindow : EditorWindow, IHasCustomMenu
     {
         public enum RenamerTarget
         {
@@ -36,16 +36,16 @@ namespace Ehrest.Editor.Renamer
             _window.Show();
         }
 
-        // public void AddItemsToMenu(GenericMenu menu)
-        // {
-        //     GUIContent content = new GUIContent(nameof(GenericMenuExample));
-        //     menu.AddItem(content, false, GenericMenuExample);
-        // }
+        public void AddItemsToMenu(GenericMenu menu)
+        {
+            GUIContent content = new GUIContent(nameof(OpenSettings));
+            menu.AddItem(content, false, OpenSettings);
+        }
 
-        // private void GenericMenuExample()
-        // {
-        //     Debug.Log("Hello world");
-        // }
+        private void OpenSettings()
+        {
+            SettingsService.OpenProjectSettings("Project/Ehrest.Renamer");
+        }
 
         private void OnGUI()
         {

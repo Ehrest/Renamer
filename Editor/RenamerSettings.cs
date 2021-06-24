@@ -4,12 +4,16 @@ namespace Ehrest.Editor.Renamer
 {
     public class RenamerSettings : ScriptableObject
     {
-        [SerializeField]
-        IncrementBehavior _incrementBehavior;
+        [SerializeField] IncrementBehavior _incrementBehavior;
 
         public static IncrementBehavior IncrementBehavior { get; private set; }
 
         private void OnValidate()
+        {
+            RenamerSettings.Refresh(this);
+        }
+
+        private void OnEnable()
         {
             RenamerSettings.Refresh(this);
         }
