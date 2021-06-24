@@ -36,6 +36,12 @@ namespace Ehrest.Editor.Renamer
             _window.Show();
         }
 
+        public static void ForceRepaint()
+        {
+            if (_window != null)
+                _window.Repaint();
+        }
+
         public void AddItemsToMenu(GenericMenu menu)
         {
             GUIContent content = new GUIContent(nameof(OpenSettings));

@@ -26,6 +26,7 @@ namespace Ehrest.Editor.Renamer
                     {
                         serialized.ApplyModifiedProperties();
                         RenamerSettings.Refresh(settings);
+                        RenamerEditorWindow.ForceRepaint();
                     }
                 },
             };
