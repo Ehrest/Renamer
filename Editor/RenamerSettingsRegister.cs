@@ -6,7 +6,7 @@ namespace Ehrest.Editor.Renamer
 {
     public static class RenamerSettingsRegister
     {
-        const string SettingsPath = "Assets/Editor/Renamer/Data/Renamer.Settings.asset";
+        const string SettingsPath = "Packages/com.ehrest.renamer/Editor/Data/Renamer.Settings.asset";
 
         [SettingsProvider]
         public static SettingsProvider CreateSettingsProvider()
