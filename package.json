@@ -7,13 +7,13 @@
   "documentationUrl": "",
   "changelogUrl": "",
   "licensesUrl": "",
-  "dependencies": {},
- "keywords": [
+  "keywords": [
     "rename"
   ],
   "author": {
     "name": "Ehrest",
     "email": "aes.gsm@gmail.com",
     "url": "https://github.com/Ehrest/Renamer"
-  }
+  },
+  "type": "tool"
 }
