@@ -1,6 +1,6 @@
 {
   "name": "com.ehrest.renamer",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "displayName": "Renamer",
   "description": "Tool for renaming scene objects",
   "unity": "2020.3",
