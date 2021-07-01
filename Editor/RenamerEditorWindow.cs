@@ -25,7 +25,10 @@ namespace Ehrest.Editor.Renamer
         Transform _renameParent;
         Vector2 _scrollPosition = Vector2.zero;
 
+        int _selectedVersion;
+
         static RenamerEditorWindow _window;
+        static VersioningTool _versioningTool;
 
 
         [MenuItem("Tools/Renamer")]
@@ -46,6 +49,8 @@ namespace Ehrest.Editor.Renamer
         {
             GUIContent content = new GUIContent(nameof(OpenSettings));
             menu.AddItem(content, false, OpenSettings);
+            content = new GUIContent(nameof(ResetVersioning));
+            menu.AddItem(content, false, ResetVersioning);
         }
 
         private void OpenSettings()
@@ -53,10 +58,39 @@ namespace Ehrest.Editor.Renamer
             SettingsService.OpenProjectSettings("Project/Ehrest.Renamer");
         }
 
+        private void ResetVersioning()
+        {
+            _versioningTool = null;
+        }
+
         private void OnGUI()
         {
             if (_window == null)
                 _window = GetWindow<RenamerEditorWindow>();
+
+            if (_versioningTool == null)
+                _versioningTool = new VersioningTool("com.ehrest.renamer");
+
+            if (!_versioningTool.IsReady)
+            {
+                GUILayout.Label("Loading versioning...", EditorStyles.boldLabel);
+            }
+            else
+            {
+                EditorGUILayout.BeginHorizontal();
+
+                GUILayout.Label($"Current version {_versioningTool.CurrentVersion}", EditorStyles.boldLabel);
+                _selectedVersion = EditorGUILayout.Popup(_selectedVersion, _versioningTool.Versions);
+
+                GUI.enabled = !_versioningTool.Versions[_selectedVersion].Equals(_versioningTool.CurrentVersion);
+                if (GUILayout.Button($"Update to {_versioningTool.Versions[_selectedVersion]}"))
+                {
+                    _versioningTool.ChangeVersionTo(_versioningTool.Versions[_selectedVersion]);
+                }
+                GUI.enabled = true;
+
+                EditorGUILayout.EndHorizontal();
+            }
 
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, false, GUILayout.Width(_window.position.width), GUILayout.Height(_window.position.height));
 

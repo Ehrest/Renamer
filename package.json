@@ -1,19 +1,23 @@
 {
   "name": "com.ehrest.renamer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "displayName": "Renamer",
   "description": "Tool for renaming scene objects",
   "unity": "2020.3",
   "documentationUrl": "",
   "changelogUrl": "",
-  "licensesUrl": "",
+  "licensesUrl": "https://github.com/Ehrest/Renamer/blob/main/LICENSE.md",
   "keywords": [
     "rename"
   ],
   "author": {
     "name": "Ehrest",
     "email": "aes.gsm@gmail.com",
-    "url": "https://github.com/Ehrest/Renamer"
+    "url": "https://github.com/Ehrest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ehrest/Renamer.git"
   },
   "type": "tool"
 }
