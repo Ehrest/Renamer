@@ -18,22 +18,42 @@ namespace Ehrest.Editor.Renamer
         public string[] Versions => _versions;
         public string CurrentVersion => _packageInfo.version;
 
-
         private ListRequest _request;
         private UnityEditor.PackageManager.PackageInfo _packageInfo;
         private string _repoPath;
-        private string _repoPathGitExtension => _repoPath +".git";
+        private string RepoPathGitExtension => _repoPath + ".git";
         private string[] _versions;
+
+        private readonly VersioningWidget _widget;
+        private static bool _refreshFlag;
 
         public VersioningTool(string packageName)
         {
             PackageName = packageName;
 
+            _widget = new VersioningWidget();
+
             GetPackageInfo();
+        }
+
+        public VersioningTool(string packageName, VersioningWidget widget)
+        {
+            PackageName = packageName;
+
+            _widget = widget;
+
+            GetPackageInfo();
+        }
+
+        [UnityEditor.Callbacks.DidReloadScripts]
+        private static void OnScriptsReloaded()
+        {
+            _refreshFlag = true;
         }
 
         public void Refresh()
         {
+            _refreshFlag = false;
             _packageInfo = null;
             _versions = new string[0];
 
@@ -47,7 +67,15 @@ namespace Ehrest.Editor.Renamer
 
         public void ChangeVersionTo(string version)
         {
-            UnityEditor.PackageManager.Client.Add(GetReleaseURL(_repoPathGitExtension, version));
+            UnityEditor.PackageManager.Client.Add(GetReleaseURL(RepoPathGitExtension, version));
+        }
+
+        public void DrawWidget()
+        {
+            if(_refreshFlag)
+                Refresh();
+
+            _widget.Draw(this);
         }
 
         private string GetReleaseURL(string repo, string version)
@@ -145,6 +173,5 @@ namespace Ehrest.Editor.Renamer
         }
 
  #endregion VersionFetch
-
     }
 }

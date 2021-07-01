@@ -49,8 +49,9 @@ namespace Ehrest.Editor.Renamer
         {
             GUIContent content = new GUIContent(nameof(OpenSettings));
             menu.AddItem(content, false, OpenSettings);
-            content = new GUIContent(nameof(ResetVersioning));
-            menu.AddItem(content, false, ResetVersioning);
+
+            content = new GUIContent("Refresh Versioning");
+            menu.AddItem(content, false, RefreshVersioning);
         }
 
         private void OpenSettings()
@@ -58,9 +59,9 @@ namespace Ehrest.Editor.Renamer
             SettingsService.OpenProjectSettings("Project/Ehrest.Renamer");
         }
 
-        private void ResetVersioning()
+        private static void RefreshVersioning()
         {
-            _versioningTool = null;
+            _versioningTool.Refresh();
         }
 
         private void OnGUI()
@@ -71,26 +72,7 @@ namespace Ehrest.Editor.Renamer
             if (_versioningTool == null)
                 _versioningTool = new VersioningTool("com.ehrest.renamer");
 
-            if (!_versioningTool.IsReady)
-            {
-                GUILayout.Label("Loading versioning...", EditorStyles.boldLabel);
-            }
-            else
-            {
-                EditorGUILayout.BeginHorizontal();
-
-                GUILayout.Label($"Current version {_versioningTool.CurrentVersion}", EditorStyles.boldLabel);
-                _selectedVersion = EditorGUILayout.Popup(_selectedVersion, _versioningTool.Versions);
-
-                GUI.enabled = !_versioningTool.Versions[_selectedVersion].Equals(_versioningTool.CurrentVersion);
-                if (GUILayout.Button($"Update to {_versioningTool.Versions[_selectedVersion]}"))
-                {
-                    _versioningTool.ChangeVersionTo(_versioningTool.Versions[_selectedVersion]);
-                }
-                GUI.enabled = true;
-
-                EditorGUILayout.EndHorizontal();
-            }
+            _versioningTool.DrawWidget();
 
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, false, GUILayout.Width(_window.position.width), GUILayout.Height(_window.position.height));
 
