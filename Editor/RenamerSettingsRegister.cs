@@ -6,8 +6,6 @@ namespace Ehrest.Editor.Renamer
 {
     public static class RenamerSettingsRegister
     {
-        const string SettingsPath = "Packages/com.ehrest.renamer/Editor/Data/Renamer.Settings.asset";
-
         [SettingsProvider]
         public static SettingsProvider CreateSettingsProvider()
         {
@@ -34,12 +32,24 @@ namespace Ehrest.Editor.Renamer
 
         public static RenamerSettings Load()
         {
-            var settings = AssetDatabase.LoadAssetAtPath<RenamerSettings>(SettingsPath);
+            string filePath;
+            RenamerSettings settings = null;
+
+            if(AssetDatabase.IsValidFolder(RenamerSettings.PackagePath))
+            {
+                filePath = RenamerSettings.PackageFullPathData;
+                settings = AssetDatabase.LoadAssetAtPath<RenamerSettings>(RenamerSettings.PackageFullPathSettings);
+            }
+            else
+            {
+                filePath = RenamerSettings.AssetFullPathData;
+                settings = AssetDatabase.LoadAssetAtPath<RenamerSettings>(RenamerSettings.AssetFullPathSettings);
+            }
 
             if (settings == null)
             {
                 settings = ScriptableObject.CreateInstance<RenamerSettings>();
-                AssetDatabase.CreateAsset(settings, SettingsPath);
+                AssetDatabase.CreateAsset(settings, filePath);
                 AssetDatabase.SaveAssets();
             }
 

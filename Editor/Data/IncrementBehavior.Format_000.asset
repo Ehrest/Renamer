@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 504a1430998fa9d46a471d8912d33986, type: 3}
   m_Name: IncrementBehavior.Format_000
   m_EditorClassIdentifier: 
-  NumberBefore: _
-  NumberFormat: 000
-  NumberAfter: 
+  usePrefix: 0
+  prefixStart: 
+  prefixEnd: 
+  numberFormat: 000
+  numberOffset: 0
+  useSuffix: 1
+  suffixStart: _
+  suffixEnd: 

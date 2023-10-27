@@ -21,15 +21,17 @@ namespace Ehrest.Editor.Renamer
         string _incrementName;
         string _addedString;
 
+        IncrementBehavior _incrementBehavior;
+
         RenamerTarget _renamerTarget;
         Transform _renameParent;
         Vector2 _scrollPosition = Vector2.zero;
 
-        int _selectedVersion;
+        GUIStyle _italicLabelStyle;
+        GUIStyle _titleLabelStyle;
 
         static RenamerEditorWindow _window;
         static VersioningTool _versioningTool;
-
 
         [MenuItem("Tools/Renamer")]
         private static void ShowWindow()
@@ -72,32 +74,69 @@ namespace Ehrest.Editor.Renamer
             if (_versioningTool == null)
                 _versioningTool = new VersioningTool("com.ehrest.renamer");
 
+
+            // Define styles
+            _italicLabelStyle = new GUIStyle(GUI.skin.label);
+            _italicLabelStyle.fontStyle = FontStyle.BoldAndItalic;
+
+            _titleLabelStyle = new GUIStyle(EditorStyles.boldLabel);
+            _titleLabelStyle.fontSize = EditorStyles.largeLabel.fontSize;
+            _titleLabelStyle.alignment = TextAnchor.MiddleCenter;
+            _titleLabelStyle.margin = new RectOffset(0, 0, 0, 10);
+
+            // Draw versioning widget
             _versioningTool.DrawWidget();
 
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, false, GUILayout.Width(_window.position.width), GUILayout.Height(_window.position.height));
 
             EditorGUILayout.Space();
 
-            GUIStyle italicLabelStyle = new GUIStyle(GUI.skin.label);
-            italicLabelStyle.fontStyle = FontStyle.BoldAndItalic;
+            DrawTargetType();
 
+            Separator();
+
+            DrawReplace();
+
+            Separator();
+            
+            DrawIncrement();
+
+            Separator();
+            
+            DrawAdding();
+
+            Separator();
+
+            DrawTrim();
+
+            GUILayout.EndScrollView();
+        }
+
+        private void Separator()
+        {
+            EditorGUILayout.Space();
+            DrawLine();
+            EditorGUILayout.Space();
+        }
+
+        private void DrawTargetType()
+        {
             _renamerTarget = (RenamerTarget)EditorGUILayout.EnumPopup("Rename Target", _renamerTarget);
 
             if (_renamerTarget == RenamerTarget.Parent || _renamerTarget == RenamerTarget.ParentRecursif)
             {
                 _renameParent = (Transform)EditorGUILayout.ObjectField("Label:", _renameParent, typeof(Transform), true);
             }
+        }
 
-            EditorGUILayout.Space();
-            EditorGUILayout.Space();
-            DrawLine();
-            EditorGUILayout.Space();
-            GUILayout.Label("Replace part of name", EditorStyles.boldLabel);
+        private void DrawReplace()
+        {
+            GUILayout.Label("Replace", _titleLabelStyle);
             _replaceMatch = EditorGUILayout.TextField(_replaceMatch);
             GUILayout.Label(" will become ");
             _replaceEntry = EditorGUILayout.TextField(_replaceEntry);
 
-            GUILayout.Label($"{ComputeReplaceEntry()} entrie(s) found", italicLabelStyle);
+            GUILayout.Label($"{ComputeReplaceEntry()} entrie(s) found", _italicLabelStyle);
 
             if (GUILayout.Button("Run replace"))
             {
@@ -108,62 +147,6 @@ namespace Ehrest.Editor.Renamer
                 GUILayout.Label($"Replace : XXX{_replaceMatch}XXX -> XXX{_replaceEntry}XXX");
             else
                 GUILayout.Label($"Replace : XXXXXX -> {_replaceEntry}");
-
-            EditorGUILayout.Space();
-            DrawLine();
-            EditorGUILayout.Space();
-            GUILayout.Label("Increment", EditorStyles.boldLabel);
-            _incrementName = EditorGUILayout.TextField("Name ", _incrementName);
-
-            GUILayout.Label($"{GetObjectCount()} entrie(s) will be modified", italicLabelStyle);
-
-            if (GUILayout.Button("Run increment"))
-            {
-                ApplyIncrement();
-            }
-            GUILayout.Label($"Increment : {GetIncrementExample()}");
-
-            EditorGUILayout.Space();
-            DrawLine();
-            EditorGUILayout.Space();
-            GUILayout.Label("Adding", EditorStyles.boldLabel);
-            _addedString = EditorGUILayout.TextField("Addition ", _addedString);
-            GUILayout.Label($"{GetObjectCount()} entrie(s) will be modified", italicLabelStyle);
-
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Run as prefix"))
-            {
-                ApplyAdding(isPrefix: true);
-            }
-            if (GUILayout.Button("Run as suffix"))
-            {
-                ApplyAdding(isPrefix: false);
-            }
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.Label($"Prefix : {_addedString}XXXXX");
-            GUILayout.Label($"Suffix : XXXXX{_addedString}");
-            EditorGUILayout.EndHorizontal();
-
-            GUILayout.EndScrollView();
-        }
-
-        private void ApplyAdding(bool isPrefix)
-        {
-            GameObject[] entries = GetTargetObjects();
-            Undo.RecordObjects(entries, "Renamer Adding");
-
-            if (!string.IsNullOrEmpty(_addedString))
-            {
-                for (int i = 0; i < entries.Length; i++)
-                {
-                    if (isPrefix)
-                        entries[i].transform.name = _addedString + entries[i].transform.name;
-                    else
-                        entries[i].transform.name = entries[i].transform.name + _addedString;
-                }
-            }
         }
 
         private void ApplyReplaceEntry()
@@ -188,9 +171,26 @@ namespace Ehrest.Editor.Renamer
             }
         }
 
+        private void DrawIncrement()
+        {
+            GUILayout.Label("Increment", _titleLabelStyle);
+            _incrementName = EditorGUILayout.TextField("Name ", _incrementName);
+            
+            if(_incrementBehavior == null)
+                _incrementBehavior = RenamerSettings.IncrementBehavior;
+            _incrementBehavior = (IncrementBehavior)EditorGUILayout.ObjectField("Increment Behavior ", _incrementBehavior, typeof(IncrementBehavior), false);
+
+            GUILayout.Label($"{GetObjectCount()} entrie(s) will be modified", _italicLabelStyle);
+
+            if (GUILayout.Button("Run increment"))
+            {
+                ApplyIncrement();
+            }
+            GUILayout.Label($"Increment : {GetIncrementExample()}");
+        }
+
         private void ApplyIncrement()
         {
-            IncrementBehavior incrementBehavior = RenamerSettings.IncrementBehavior;
             GameObject[] entries = GetSortedTargetObjects();
             Undo.RecordObjects(entries, "Renamer Increment");
 
@@ -201,7 +201,111 @@ namespace Ehrest.Editor.Renamer
                 if(useEntryName)
                     baseName = entries[i].transform.name;
 
-                entries[i].transform.name = incrementBehavior.Apply(baseName, 0);
+                entries[i].transform.name = _incrementBehavior.Apply(baseName, i);
+            }
+        }
+
+        private void DrawAdding()
+        {
+            GUILayout.Label("Add", _titleLabelStyle);
+            _addedString = EditorGUILayout.TextField("Addition ", _addedString);
+            GUILayout.Label($"{GetObjectCount()} entrie(s) will be modified", _italicLabelStyle);
+
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Run as prefix"))
+            {
+                ApplyAdding(isPrefix: true);
+            }
+            if (GUILayout.Button("Run as suffix"))
+            {
+                ApplyAdding(isPrefix: false);
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label($"Prefix : {_addedString}XXXXX");
+            GUILayout.Label($"Suffix : XXXXX{_addedString}");
+            EditorGUILayout.EndHorizontal();
+        }
+
+        private void ApplyAdding(bool isPrefix)
+        {
+            GameObject[] entries = GetTargetObjects();
+            Undo.RecordObjects(entries, "Renamer Adding");
+
+            if (!string.IsNullOrEmpty(_addedString))
+            {
+                for (int i = 0; i < entries.Length; i++)
+                {
+                    if (isPrefix)
+                        entries[i].transform.name = _addedString + entries[i].transform.name;
+                    else
+                        entries[i].transform.name = entries[i].transform.name + _addedString;
+                }
+            }
+        }
+
+        private void DrawTrim()
+        {
+            GUILayout.Label("Trim", _titleLabelStyle);
+            GUILayout.Label($"{GetObjectCount()} entrie(s) will be modified", _italicLabelStyle);
+
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("4"))
+            {
+                ApplyTrim(isPrefix: true, value: 4);
+            }
+            if (GUILayout.Button("3"))
+            {
+                ApplyTrim(isPrefix: true, value: 3);
+            }
+            if (GUILayout.Button("2"))
+            {
+                ApplyTrim(isPrefix: true, value: 2);
+            }
+            if (GUILayout.Button("1"))
+            {
+                ApplyTrim(isPrefix: true, value: 1);
+            }
+
+            GUILayout.Space(20f);
+
+            if (GUILayout.Button("1"))
+            {
+                ApplyTrim(isPrefix: false, value: 1);
+            }
+            if (GUILayout.Button("2"))
+            {
+                ApplyTrim(isPrefix: false, value: 2);
+            }
+            if (GUILayout.Button("3"))
+            {
+                ApplyTrim(isPrefix: false, value: 3);
+            }
+            if (GUILayout.Button("4"))
+            {
+                ApplyTrim(isPrefix: false, value: 4);
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+
+        private void ApplyTrim(bool isPrefix, int value)
+        {
+            GameObject[] entries = GetTargetObjects();
+            Undo.RecordObjects(entries, "Renamer Trim");
+
+            if (!string.IsNullOrEmpty(_addedString))
+            {
+                for (int i = 0; i < entries.Length; i++)
+                {
+                    if(entries[i].transform.name.Length <= value)
+                        continue;
+
+                    if (isPrefix)
+                        entries[i].transform.name = entries[i].transform.name.Substring(value);
+                    else
+                        entries[i].transform.name = entries[i].transform.name.Substring(0, entries[i].transform.name.Length - value);
+                }
             }
         }
 

@@ -134,10 +134,16 @@ namespace Ehrest.Editor.Renamer
         {
             _packageInfo = packageInfo;
 
+            #if UNITY_2020_1_OR_NEWER
+
             string split = "github.com/";
             string gitExt = ".git";
+
             _repoPath = packageInfo.repository.url.Substring(packageInfo.repository.url.IndexOf(split) + split.Length);
             _repoPath = _repoPath.Substring(0, _repoPath.Length - gitExt.Length);
+            #else
+            _repoPath = RenamerSettings.Repository;
+            #endif
 
             InitializeVersions(_repoPath);
         }

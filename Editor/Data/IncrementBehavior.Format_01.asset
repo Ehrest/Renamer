@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 504a1430998fa9d46a471d8912d33986, type: 3}
-  m_Name: IncrementBehavior.Format (0)
+  m_Name: IncrementBehavior.Format_01
   m_EditorClassIdentifier: 
   usePrefix: 0
   prefixStart: 
   prefixEnd: 
-  numberFormat: (0)
+  numberFormat: 00
   numberOffset: 0
   useSuffix: 1
-  suffixStart: ' '
+  suffixStart: _
   suffixEnd: 
