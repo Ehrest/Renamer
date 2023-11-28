@@ -27,11 +27,11 @@ namespace Ehrest.Editor.Renamer
             {
                 if(_incrementBehaviorAccess == null)
                 {
-                    _incrementBehaviorAccess = AssetDatabase.LoadAssetAtPath<IncrementBehavior>(PackageFullPathData + baseIncrementFile);
+                    _incrementBehaviorAccess = AssetDatabase.LoadAssetAtPath<IncrementBehavior>(PackageFullPathData + BaseIncrementFile);
 
                     if(_incrementBehaviorAccess == null)
                     {
-                        _incrementBehaviorAccess = AssetDatabase.LoadAssetAtPath<IncrementBehavior>(AssetFullPathData + baseIncrementFile);
+                        _incrementBehaviorAccess = AssetDatabase.LoadAssetAtPath<IncrementBehavior>(AssetFullPathData + BaseIncrementFile);
                     }
 
                     Debug.LogWarning("Incremental Behaviour is null, fetching the default scheme XXX_000. Please consider configuring the behavior in the Projects Settings");
