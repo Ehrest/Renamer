@@ -15,7 +15,7 @@ namespace Ehrest.Editor.Renamer
         public const string AssetFullPathData = AssetPath + DataPath;
         public const string AssetFullPathSettings = AssetFullPathData + SettingsFile;
 
-        private const string baseIncrementFile = "IncrementBehavior.Format_000.asset";
+        public const string BaseIncrementFile = "IncrementBehavior.Format_000.asset";
 
 
         [SerializeField] IncrementBehavior _incrementBehavior;
