@@ -15,7 +15,8 @@ namespace Ehrest.Editor.Renamer
         public const string AssetFullPathData = AssetPath + DataPath;
         public const string AssetFullPathSettings = AssetFullPathData + SettingsFile;
 
-        public const string BaseIncrementFile = "IncrementBehavior.Format_000.asset";
+        public const string SettingsFile = "Renamer.Settings";
+        private const string baseIncrementFile = "IncrementBehavior.Format_000.asset";
 
 
         [SerializeField] IncrementBehavior _incrementBehavior;
@@ -27,11 +28,11 @@ namespace Ehrest.Editor.Renamer
             {
                 if(_incrementBehaviorAccess == null)
                 {
-                    _incrementBehaviorAccess = AssetDatabase.LoadAssetAtPath<IncrementBehavior>(PackageFullPathData + BaseIncrementFile);
+                    _incrementBehaviorAccess = AssetDatabase.LoadAssetAtPath<IncrementBehavior>(PackageFullPathData + baseIncrementFile);
 
                     if(_incrementBehaviorAccess == null)
                     {
-                        _incrementBehaviorAccess = AssetDatabase.LoadAssetAtPath<IncrementBehavior>(AssetFullPathData + BaseIncrementFile);
+                        _incrementBehaviorAccess = AssetDatabase.LoadAssetAtPath<IncrementBehavior>(AssetFullPathData + baseIncrementFile);
                     }
 
                     Debug.LogWarning("Incremental Behaviour is null, fetching the default scheme XXX_000. Please consider configuring the behavior in the Projects Settings");

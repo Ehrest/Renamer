@@ -49,7 +49,7 @@ namespace Ehrest.Editor.Renamer
             if (settings == null)
             {
                 settings = ScriptableObject.CreateInstance<RenamerSettings>();
-                AssetDatabase.CreateAsset(settings, filePath + RenamerSettings.BaseIncrementFile);
+                AssetDatabase.CreateAsset(settings, filePath + RenamerSettings.SettingsFile);
                 AssetDatabase.SaveAssets();
             }
 
